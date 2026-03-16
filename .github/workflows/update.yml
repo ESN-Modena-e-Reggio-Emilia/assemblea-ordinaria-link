@@ -49,7 +49,7 @@ jobs:
                 <meta charset='UTF-8'>
                 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
                 <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate'>
-                <meta name="color-scheme" content="light dark">
+                <meta name='color-scheme' content='light dark'>
                 <meta http-equiv='refresh' content='0; url=https://drive.google.com/file/d/${FILE_ID}/view'>
                 <title>Convocazione Assemblea - ESN Modena e Reggio Emilia</title>
                 <!-- Importiamo il font Lato dal VIM di ESN -->
