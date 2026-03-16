@@ -2,10 +2,9 @@ name: Update Latest PDF Link
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
-# Permessi corretti per pubblicare direttamente su Pages
 permissions:
   contents: read
   pages: write
@@ -25,11 +24,10 @@ jobs:
       - name: Fetch latest file and generate HTML
         env:
           API_KEY: ${{ secrets.GDRIVE_API_KEY }}
-          FOLDER_ID: '1ejDfIQQ31T3ZUmIdQcB-b4Yxl152uZKA'
+          FOLDER_ID: "1ejDfIQQ31T3ZUmIdQcB-b4Yxl152uZKA"
         run: |
-          # Creiamo una cartella per il sito
           mkdir public
-          
+
           RESPONSE=$(curl -s -G \
             --data-urlencode "q='${FOLDER_ID}' in parents and trashed=false and mimeType='application/pdf'" \
             --data-urlencode "orderBy=modifiedTime desc" \
@@ -38,13 +36,13 @@ jobs:
             --data-urlencode "supportsAllDrives=true" \
             --data-urlencode "key=${API_KEY}" \
             "https://www.googleapis.com/drive/v3/files")
-          
+
           FILE_ID=$(echo $RESPONSE | jq -r '.files[0].id')
-          
-          if[ "$FILE_ID" != "null" ] && [ -n "$FILE_ID" ]; then
+
+          # QUI C'ERA L'ERRORE: "if[" corretto in "if ["
+          if [ "$FILE_ID" != "null" ] &&[ -n "$FILE_ID" ]; then
             echo "Found file ID: $FILE_ID"
             
-            # Creiamo l'HTML con tag per impedire al browser di usare la vecchia cache
             echo "<!DOCTYPE html><html><head><meta http-equiv=\"Cache-Control\" content=\"no-cache, no-store, must-revalidate\"><meta http-equiv=\"refresh\" content=\"0; url=https://drive.google.com/file/d/${FILE_ID}/view\"><title>Redirecting...</title></head><body><p>Redirecting... If you are not redirected automatically, <a href=\"https://drive.google.com/file/d/${FILE_ID}/view\">click here</a>.</p></body></html>" > public/index.html
             
           else
@@ -58,7 +56,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'public'
+          path: "public"
 
       - name: Deploy to GitHub Pages
         id: deployment
