@@ -54,6 +54,23 @@ jobs:
                 <!-- Importiamo il font Lato dal VIM di ESN -->
                 <link href='https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap' rel='stylesheet'>
                 <style>
+                    :root {
+                        --bg-color: #ffffff;
+                        --text-color: #333333;
+                        --title-color: #2e3192; /* ESN Dark Blue */
+                        --link-color: #00aeef;  /* ESN Cyan */
+                        --spinner-bg: #f3f3f3;
+                    }
+
+                    @media (prefers-color-scheme: dark) {
+                        :root {
+                            --bg-color: #121212;
+                            --text-color: #eeeeee;
+                            --title-color: #ffffff;
+                            --spinner-bg: #333333;
+                        }
+                    }
+
                     body {
                         font-family: 'Lato', sans-serif;
                         display: flex;
@@ -62,34 +79,31 @@ jobs:
                         justify-content: center;
                         height: 100vh;
                         margin: 0;
-                        background-color: #ffffff;
+                        background-color: var(--bg-color);
+                        color: var(--text-color);
                         text-align: center;
                         padding: 20px;
+                        transition: background-color 0.3s ease;
                     }
                     img {
                         max-width: 300px;
                         margin-bottom: 25px;
                     }
                     h1 {
-                        color: #2e3192; /* ESN Dark Blue */
+                        color: var(--title-color);
                         font-size: 26px;
                         margin-bottom: 5px;
                     }
                     p {
-                        color: #333333;
                         font-size: 16px;
                     }
                     a {
-                        color: #00aeef; /* ESN Cyan */
+                        color: var(--link-color);
                         text-decoration: none;
                         font-weight: 700;
                     }
-                    a:hover {
-                        text-decoration: underline;
-                    }
-                    /* Rotellina di caricamento colorata */
                     .spinner {
-                        border: 4px solid #f3f3f3;
+                        border: 4px solid var(--spinner-bg);
                         border-top: 4px solid #ec008c; /* ESN Magenta */
                         border-radius: 50%;
                         width: 40px;
@@ -104,7 +118,10 @@ jobs:
                 </style>
             </head>
             <body>
-                <img src='https://more.esn.it/sites/esnmodena.it/files/web-it-mode-esn-colour-black.png' alt='Logo ESN Modena e Reggio Emilia'>
+                <picture>
+                    <source srcset='https://more.esn.it/sites/esnmodena.it/files/web-it-mode-esn-colour-white.png' media='(prefers-color-scheme: dark)'>
+                    <img src='https://more.esn.it/sites/esnmodena.it/files/web-it-mode-esn-colour-black.png' alt='Logo ESN'>
+                </picture>
                 <h1>Assemblea Ordinaria</h1>
                 <p>Reindirizzamento all'ultima convocazione in corso...</p>
                 <div class='spinner'></div>
