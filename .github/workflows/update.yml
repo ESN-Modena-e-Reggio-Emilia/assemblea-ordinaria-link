@@ -2,8 +2,8 @@ name: Update Latest PDF Link
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # Runs every 15 minutes automatically
-  workflow_dispatch: # Allows you to click a button to run it manually
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,8 +20,15 @@ jobs:
           API_KEY: ${{ secrets.GDRIVE_API_KEY }}
           FOLDER_ID: '1ejDfIQQ31T3ZUmIdQcB-b4Yxl152uZKA'
         run: |
-          # Query Google Drive API for the newest PDF in your specific folder
-          RESPONSE=$(curl -s "https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents+and+trashed=false+and+mimeType='application/pdf'&orderBy=modifiedTime+desc&pageSize=1&key=${API_KEY}")
+          # Query Google Drive API using proper URL encoding and Shared Drive support
+          RESPONSE=$(curl -s -G \
+            --data-urlencode "q='${FOLDER_ID}' in parents and trashed=false and mimeType='application/pdf'" \
+            --data-urlencode "orderBy=modifiedTime desc" \
+            --data-urlencode "pageSize=1" \
+            --data-urlencode "includeItemsFromAllDrives=true" \
+            --data-urlencode "supportsAllDrives=true" \
+            --data-urlencode "key=${API_KEY}" \
+            "https://www.googleapis.com/drive/v3/files")
           
           # Extract the File ID
           FILE_ID=$(echo $RESPONSE | jq -r '.files[0].id')
@@ -29,7 +36,7 @@ jobs:
           if [ "$FILE_ID" != "null" ] && [ -n "$FILE_ID" ]; then
             echo "Found file ID: $FILE_ID"
             
-            # Create index.html on a single line to avoid bash/yaml indentation errors
+            # Create index.html on a single line
             echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=https://drive.google.com/file/d/${FILE_ID}/view\"><title>Redirecting...</title></head><body><p>Redirecting... If you are not redirected automatically, <a href=\"https://drive.google.com/file/d/${FILE_ID}/view\">click here</a>.</p></body></html>" > index.html
             
           else
@@ -43,5 +50,4 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add index.html
-          # Only commit if a NEW pdf was uploaded and index.html actually changed
           git diff --quiet && git diff --staged --quiet || (git commit -m "Updated PDF link" && git push)
