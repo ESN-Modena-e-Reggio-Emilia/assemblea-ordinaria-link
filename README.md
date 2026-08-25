@@ -55,8 +55,13 @@ pm2 start ecosystem.config.cjs
 pm2 save
 ```
 
-`ecosystem.config.cjs` usa `interpreter: "bun"`, quindi Bun deve essere nel `PATH` dell'utente PM2
-(se `pm2` non lo trova, metti il percorso assoluto in `interpreter`).
+`ecosystem.config.cjs` lancia `bun run src/index.ts` con `interpreter: "none"`: PM2 esegue Bun come
+comando normale invece di caricare lo script nel proprio wrapper. **Non usare `interpreter: "bun"`**
+— quel percorso fa `require()` dell'entrypoint e muore su `TypeError: require() async module ... is
+unsupported`, perché `src/index.ts` usa top-level await.
+
+Bun deve essere nel `PATH` dell'utente PM2; se `pm2` non lo trova, metti il percorso assoluto
+(`which bun`, tipicamente `~/.bun/bin/bun`) in `script`.
 
 Reverse proxy nginx:
 
